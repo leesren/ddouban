@@ -1,0 +1,98 @@
+.segmented-control {
+  position: relative;
+  display: table;
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 400;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+.segmented-control .control-item {
+  display: table-cell;
+  width: 1%;
+  padding-top: 6px;
+  padding-bottom: 7px;
+  overflow: hidden;
+  line-height: 1;
+  color: #333;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-left: 1px solid #ccc;
+}
+
+.segmented-control .control-item:first-child {
+  border-left-width: 0;
+}
+
+.segmented-control .control-item:active {
+  background-color: #eee;
+}
+
+.segmented-control .control-item.active {
+  background-color: #ccc;
+}
+
+.segmented-control-primary {
+  border-color: #428bca;
+}
+
+.segmented-control-primary .control-item {
+  color: #428bca;
+  border-color: inherit;
+}
+
+.segmented-control-primary .control-item:active {
+  background-color: #cde1f1;
+}
+
+.segmented-control-primary .control-item.active {
+  color: #fff;
+  background-color: #428bca;
+}
+
+.segmented-control-positive {
+  border-color: #5cb85c;
+}
+
+.segmented-control-positive .control-item {
+  color: #5cb85c;
+  border-color: inherit;
+}
+
+.segmented-control-positive .control-item:active {
+  background-color: #d8eed8;
+}
+
+.segmented-control-positive .control-item.active {
+  color: #fff;
+  background-color: #5cb85c;
+}
+
+.segmented-control-negative {
+  border-color: #d9534f;
+}
+
+.segmented-control-negative .control-item {
+  color: #d9534f;
+  border-color: inherit;
+}
+
+.segmented-control-negative .control-item:active {
+  background-color: #f9e2e2;
+}
+
+.segmented-control-negative .control-item.active {
+  color: #fff;
+  background-color: #d9534f;
+}
+
+.control-content {
+  display: none;
+}
+
+.control-content.active {
+  display: block;
+}

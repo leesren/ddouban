@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hello Extensions</title>
+    <meta name="renderer" content="webkit" />
+    <link rel="stylesheet" href="./css/base.css" />
+    <link rel="stylesheet" href="./css/ui.css" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-size: 15px;
+        font-family: 'Open Sans', sans-serif;
+        color: #444;
+        background-color: #fefefe;
+        background-image: linear-gradient(#fc6c48 0%, #ef5081 100%);
+        background-repeat: no-repeat;
+        background-size: cover;
+        padding: 20px 20px;
+        margin: 0;
+        position: relative;
+      }
+
+      .todo-wrapper {
+        width: 400px;
+        max-width: 100%;
+        min-height: 500px;
+        border: 1px solid #eee;
+        border-radius: 4px;
+        padding: 0px 20px;
+        -webkit-box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.05);
+        box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.05);
+        background-color: #f4f7fc;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .todo-title {
+        font-size: 1.2em;
+        color: #f65c65;
+        font-weight: normal;
+      }
+
+      form {
+        overflow: overlay;
+      }
+
+      form label {
+        display: block;
+        text-align: center;
+        font-size: 1.2em;
+      }
+
+      .btn,
+      input {
+        line-height: 2em;
+        border-radius: 3px;
+        border: 0;
+        display: inline-block;
+        margin: 15px 0;
+        padding: 0.2em 0.2em;
+        font-size: 1em;
+      }
+
+      input[type='text'] {
+        border: 1px solid #ddd;
+        transition: all ease-in 0.25s;
+      }
+
+      input:focus {
+        outline: none;
+        border: 1px solid #a3b1ff;
+      }
+
+      input::placeholder {
+        color: rgba(0, 0, 0, 0.3);
+        font-style: italic;
+      }
+
+      .btn {
+        text-align: center;
+        font-weight: bold;
+        cursor: pointer;
+        border-width: 1px;
+        border-style: solid;
+      }
+
+      .btn-add {
+        background: #ddd;
+        color: #fefefe;
+        border-color: #ddd;
+        min-width: 17%;
+        pointer-events: none;
+        transition: all ease-in 0.25s;
+        line-height: 0.5em;
+        padding: 0.3em 0.3em;
+        float: right;
+      }
+
+      .btn-add.active {
+        background: #6664ff;
+        border-color: #6664ff;
+        pointer-events: visible;
+      }
+
+      .btn-add.active:hover {
+        background: #4442f6;
+        border-color: #4442f6;
+      }
+
+      .btn-add:active {
+        transform: scale(0.95);
+      }
+      .control-buttons {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        text-align: center;
+      }
+      .btn-secondary {
+        display: inline-block;
+        position: relative;
+        border: 0;
+        padding: 0;
+        margin: 0 10px;
+      }
+
+      .btn-secondary:after {
+        position: absolute;
+        content: '';
+        width: 0;
+        height: 3px;
+        background-color: #f4586e;
+        bottom: 0px;
+        left: 0;
+        transition: all ease-in 0.25s;
+      }
+
+      .btn-secondary:hover:after {
+        width: 100%;
+      }
+
+      ul.todo-list {
+        padding: 0;
+        margin-bottom: 30px;
+        max-height: 264px;
+        overflow: auto;
+      }
+
+      ul.todo-list li {
+        position: relative;
+        list-style-type: none;
+        display: block;
+        margin: 5px 0;
+        background: #e0e8f5;
+        border-radius: 3px;
+        padding-left: 8px; /* custom checkbox width + 16 */
+        padding-top: 6px;
+        padding-bottom: 6px;
+        padding-right: 49px; /* delete button + 5 */
+        overflow: hidden;
+      }
+
+      ul.todo-list.archived li {
+        background: #fff;
+      }
+
+      .todo-text {
+        position: relative;
+        display: inline-block;
+        padding: 0 0.5em;
+      }
+
+      ul.todo-list li .delete {
+        position: absolute;
+        height: 100%;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+        cursor: pointer;
+        opacity: 0;
+        width: 0;
+        background-color: #f56468;
+        color: #fff;
+        transition: all ease-in 0.25s;
+      }
+
+      ul.todo-list li .delete:after {
+        position: absolute;
+        content: 'del';
+        width: 16px;
+        height: 16px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.5);
+        transition: all ease-in 0.25s;
+      }
+
+      ul.todo-list li:hover .delete {
+        width: 44px;
+        opacity: 1;
+      }
+
+      ul.todo-list li:hover .delete:after {
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      .todo-checkbox {
+        position: absolute;
+        opacity: 0;
+        display: none;
+      }
+
+      .todo-checkbox + label {
+        position: absolute;
+        cursor: pointer;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 22px;
+        height: 22px;
+        border-radius: 2px;
+        border: 1px solid #cfdcec;
+        background-color: #fff;
+      }
+
+      .todo-checkbox:checked + label:after {
+        position: absolute;
+        content: '';
+        top: 30%;
+        left: 50%;
+        height: 3px;
+        width: 6px;
+        border: solid #fc6c48;
+        border-width: 0 0 2px 2px;
+        transform-origin: center center;
+        transform: rotate(-45deg) translate(-50%, -50%);
+      }
+
+      .todo-checkbox:checked + label:after {
+        display: block;
+      }
+
+      .todo-checkbox:checked ~ .todo-text {
+        color: #888;
+        text-decoration: line-through;
+      }
+
+      .status.free {
+        font-weight: bold;
+        text-align: center;
+        margin: 40px 0;
+      }
+      .status.free img {
+        display: block;
+        width: 50px;
+        margin: 10px auto;
+        vertical-align: middle;
+      }
+
+      .todo-item-enter-active,
+      .todo-item-leave-active {
+        transition: opacity ease 0.25s, transform ease-in-out 0.3s;
+        transform-origin: left center;
+      }
+
+      /* .todo-item-leave-active below version 2.1.8 */
+      .todo-item-enter,
+      .todo-item-leave-to {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+
+      .slide-fade-enter-active,
+      .slide-fade-leave-active {
+        transition: all 0.3s ease;
+      }
+      /* .slide-fade-leave-active below version 2.1.8 */
+      .slide-fade-enter,
+      .slide-fade-leave-to {
+        transform: scale(1.1);
+        opacity: 0;
+      }
+
+      /* Footer */
+      footer {
+        position: absolute;
+        width: 100%;
+        text-align: center;
+        color: #fff;
+        bottom: 20px;
+        left: 0;
+      }
+
+      footer a {
+        color: #fff;
+      }
+      .fbox {
+        display: flex;
+      }
+      .fbox-vc {
+        display: flex;
+        align-items: center;
+      }
+      .fbox-hvc {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .flex {
+        flex: 1;
+      }
+      .input-todo {
+      }
+      .mr10 {
+        margin-right: 10px;
+      }
+      .todo-text i {
+        font-size: 12px;
+        color: #666;
+        padding-left: 8px;
+      }
+      .notice {
+        color: #ff3b3be0;
+        font-size: 12px;
+      }
+      .none {
+        display: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <section class="todo-wrapper">
+      <h1 class="todo-title">用户管理</h1>
+      <div class="segmented-control">
+        <a class="control-item active" data-value="1">用户管理</a>
+        <a class="control-item" data-value="2">筋斗云设置</a>
+      </div>
+      <div class="control-target-item" data-value="1">
+        <form class="fbox">
+          <input
+            type="text"
+            name="userUrl"
+            id="userUrl"
+            placeholder="http://172.253.32.91/devops/verify/quicklogin/login.php?userId=UR1000006942&userAccount=wuyh&userName=%E5%90%B4%E5%96%BB%E6%85%A7"
+            class="flex input-todo mr10"
+          />
+          <div class="btn btn-add active fbox-hvc">添加</div>
+        </form>
+        <div class="notice"></div>
+        <div>
+          <p class="status busy"></p>
+          <ul class="todo-list">
+            <!-- <li>
+              <label for="item_1"></label>
+              <span class="todo-text"> 胡伟业<i>huwy</i> </span>
+              <span class="delete"></span>
+            </li>
+            <li>
+              <label for="item_0"></label>
+              <span class="todo-text">李广<i>liguang</i></span>
+              <span class="delete"></span>
+            </li> -->
+          </ul>
+        </div>
+        <div class="control-buttons">
+          <div class="btn btn-secondary clear-all">Clear All</div>
+        </div>
+      </div>
+      <div class="control-target-item none" data-value="2">
+        <div class="fbox">
+          <input
+            type="text"
+            id="ipSetting"
+            name="ipSetting"
+            placeholder="筋斗云IP地址"
+            class="flex mr10"
+          />
+          <div class="btn btn-update active fbox-hvc">更新</div>
+        </div>
+        <div class="tx-hc fs12">默认指向: xxxxx</div>
+      </div>
+    </section>
+    <script src="./js/options.js"></script>
+  </body>
+</html>
