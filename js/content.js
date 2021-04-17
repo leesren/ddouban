@@ -70,13 +70,17 @@ function toggleUser(btnBox) {
   })
 }
 function getGroupInfo() {
-  const groupDom = document.getElementById('g-side-info-member')
-  const groupInfo = {
-    name: groupDom.querySelector('.title').innerText,
-    url: groupDom.querySelector('.title a').getAttribute('href'),
-    pic: groupDom.querySelector('.pic img').getAttribute('src'),
+  try {
+    const groupDom = document.getElementById('g-side-info-member')
+    const groupInfo = {
+      name: groupDom.querySelector('.title').innerText,
+      url: groupDom.querySelector('.title a').getAttribute('href'),
+      pic: groupDom.querySelector('.pic img').getAttribute('src'),
+    }
+    return groupInfo
+  } catch (error) {
+    reload(0)
   }
-  return groupInfo
 }
 function start() {
   const groupInfo = getGroupInfo()
@@ -185,45 +189,7 @@ function saveData({ cacheData, dataMap, list, storeKey }) {
     }
   })
   cacheData.sort((a, b) => b.lastDateTime - a.lastDateTime)
-  localStorage.setItem(storeKey, JSON.stringify(cacheData.slice(0, 400)))
-}
-function handleFlow(quick = false) {
-  if (location.pathname.startsWith('/ibp/project/flow/')) {
-    const ls = location.href.split(/\//)
-    let flowId = ''
-    while (
-      !/^[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}$/.test(
-        (flowId = ls.pop())
-      )
-    ) {}
-
-    if (flowId) {
-      fetch('/ibps/project/applyFlowService/listApproval', {
-        body: JSON.stringify({ params: [flowId] }),
-        method: 'POST',
-        mode: 'cors',
-        credentials: 'include',
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          console.log('log', res)
-
-          let item = res.pop()
-          let processor = item.processor
-          if (item && item.processor.indexOf(',') != -1) {
-            processor = item.processor.split(',').shift()
-          }
-          processor &&
-            send({
-              message: 'GetCurrentProcessor',
-              data: { quick, userName: processor },
-            })
-        })
-        .catch((error) => {
-          console.error(error)
-        })
-    }
-  }
+  localStorage.setItem(storeKey, JSON.stringify(cacheData.slice(0, 4000)))
 }
 
 function send(data) {
