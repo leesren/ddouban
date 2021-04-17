@@ -90,7 +90,7 @@ function start() {
     }, {})
     if (cacheData.length >= 4000) {
       console.log('存储超过4000条了')
-
+      reload(0)
       return
     }
     const query = (location.search || '')
